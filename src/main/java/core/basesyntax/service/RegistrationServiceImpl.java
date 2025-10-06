@@ -5,6 +5,9 @@ import core.basesyntax.dao.StorageDaoImpl;
 import core.basesyntax.model.User;
 
 public class RegistrationServiceImpl implements RegistrationService {
+    private static final Integer AGE = 18;
+    private static final Integer ZERO = 0;
+    private static final Integer MIN_LENGTH = 6;
     private final StorageDao storageDao = new StorageDaoImpl();
 
     @Override
@@ -18,24 +21,45 @@ public class RegistrationServiceImpl implements RegistrationService {
         Integer age = user.getAge();
 
         if (login == null) {
-            throw new LoginNullException("Login must be at least 6 characters");
+            throw new LoginNullException("Login cannot be null");
         }
         if (password == null) {
-            throw new PasswordNullException("Password must be at least 6 characters");
+            throw new PasswordNullException("Password  cannot be null");
         }
         if (age == null) {
-            throw new AgeNullException("User must be at least 18");
+            throw new AgeNullException("User's age cannot be null");
         }
 
-        if (login.length() < 6) {
+        login = login.trim();
+        password = password.trim();
+
+        if (login.isEmpty()) {
+            throw new LoginLengthException("Login must be at least 6 characters");
+        }
+        if (password.isEmpty()) {
+            throw new PasswordLengthException("Password must be at least 6 characters");
+        }
+
+        if (login.length() < MIN_LENGTH) {
             throw new LoginLengthException("Login must have more than 6 symbols! Yours have: "
                     + login.length());
         }
-        if (password.length() < 6) {
+        if (password.length() < MIN_LENGTH) {
             throw new PasswordLengthException("Password must have more than 6 symbols! Yours have: "
                     + password.length());
         }
-        if (age < 18) {
+
+        if (age < ZERO) {
+            throw new AgePermissionException("Age cannot be negative! Your age: "
+                    + age);
+        }
+
+        if (age == ZERO) {
+            throw new AgePermissionException("Age cannot be zero! Your age: "
+                    + age);
+        }
+
+        if (age < AGE) {
             throw new AgePermissionException("Your age must be greater that 18! Your age: "
                     + age);
         }

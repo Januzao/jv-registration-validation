@@ -146,4 +146,28 @@ class RegistrationServiceImplTest {
         User returned = registrationService.register(u);
         assertSame(u, returned);
     }
+
+    @Test
+    void registerNegativeAge_notOk() {
+        User u = new User(104L, "neg_age", "password", -5);
+        assertThrows(AgePermissionException.class, () -> registrationService.register(u));
+    }
+
+    @Test
+    void registerZeroAge_notOk() {
+        User u = new User(10L, "Zero_age", "password12", 0);
+        assertThrows(AgePermissionException.class, () -> registrationService.register(u));
+    }
+
+    @Test
+    void registerBlankLogin_notOk() {
+        User u = new User(105L, "  ", "password", 20);
+        assertThrows(LoginLengthException.class, () -> registrationService.register(u));
+    }
+
+    @Test
+    void register_blankPassword_notOk() {
+        User u = new User(106L, "blank_pwd_user", "     ", 20);
+        assertThrows(PasswordLengthException.class, () -> registrationService.register(u));
+    }
 }
